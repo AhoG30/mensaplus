@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#66a800">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Meine WH · Mensa+ (Konzept)</title>
+<style>
+  :root{--grn:#65a800;--grnd:#4e8200;--ong:#374d40;--ios-bg:#f2f2f7;--card:#ffffff;--txt:#1c1c1e;--mut:#8e8e93;--sep:#e5e5ea;}
+  *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent;}
+  body{background:#3a3f46;display:flex;flex-direction:column;align-items:center;padding:20px 6px;min-height:100vh;}
+  .phone{width:400px;max-width:100%;height:850px;background:var(--ios-bg);border-radius:54px;border:12px solid #111;overflow:hidden;overflow:clip;position:relative;box-shadow:0 24px 70px rgba(0,0,0,.5);}
+  .island{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:118px;height:34px;background:#000;border-radius:20px;z-index:60;}
+  .sbar{position:absolute;top:0;left:0;right:0;height:54px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 28px 6px;font-size:15px;font-weight:600;color:var(--txt);z-index:50;pointer-events:none;}
+  .lock .sbar{color:#fff;}
+  .scr{display:none;height:100%;overflow-y:auto;padding:58px 0 96px;animation:fade .22s ease;}
+  .scr.on{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  /* iOS Large Title */
+  .lt{padding:8px 18px 4px;}
+  .lt h1{font-size:30px;font-weight:800;letter-spacing:.2px;}
+  .lt p{font-size:13px;color:var(--mut);margin-top:2px;}
+  .lt .gear{float:right;font-size:22px;margin-top:2px;cursor:pointer;}
+  /* Cards iOS inset style */
+  .c{background:var(--card);border-radius:14px;margin:10px 14px;padding:13px 14px;box-shadow:0 .5px 2px rgba(0,0,0,.06);}
+  .sec{font-size:12px;font-weight:700;color:var(--mut);letter-spacing:.6px;margin:14px 20px 2px;text-transform:uppercase;}
+  .row{display:flex;align-items:center;gap:11px;padding:10px 0;border-top:.5px solid var(--sep);}
+  .row:first-child{border-top:0;}
+  .ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;background:var(--ios-bg);}
+  .grow{flex:1;min-width:0;}
+  .t1{font-size:15px;font-weight:600;}
+  .t2{font-size:12px;color:var(--mut);margin-top:1px;}
+  .pr{font-size:15px;font-weight:700;color:var(--grnd);white-space:nowrap;}
+  .chip{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;margin-right:4px;}
+  .ch-g{background:#ecf5dd;color:var(--grnd);} .ch-o{background:#e4ebe6;color:var(--ong);} .ch-b{background:#e9e9ee;color:#555;}
+  .btn{display:block;width:100%;border:0;background:var(--grn);color:#fff;font-size:15px;font-weight:700;padding:13px;border-radius:12px;margin-top:10px;cursor:pointer;transition:transform .08s;}
+  .btn:active{transform:scale(.97);}
+  .btn.soft{background:#ecf5dd;color:var(--grnd);}
+  .btn.org{background:var(--ong);}
+  .mini{border:0;background:var(--grn);color:#fff;border-radius:99px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;}
+  .mini.done{background:#ecf5dd;color:var(--grnd);}
+  .link{color:var(--grnd);font-weight:600;text-decoration:none;font-size:12px;cursor:pointer;}
+  /* Banner */
+  .ban{margin:10px 14px;padding:14px;border-radius:16px;background:linear-gradient(120deg,#374d40,#2b3c32);color:#fff;cursor:pointer;}
+  .ban b{font-size:15px;} .ban div{font-size:12px;opacity:.92;margin-top:2px;}
+  /* Occupancy bars */
+  .bars{display:flex;align-items:flex-end;gap:7px;height:52px;margin-top:10px;}
+  .bar{flex:1;background:#e3e8dc;border-radius:5px 5px 0 0;position:relative;}
+  .bar.hot{background:var(--grn);} .bar.now{outline:2.5px solid var(--grnd);outline-offset:1.5px;}
+  .bl{position:absolute;bottom:-17px;left:0;right:0;text-align:center;font-size:9.5px;color:var(--mut);}
+  /* Segmented control */
+  .seg{display:flex;background:#e4e4e9;border-radius:10px;padding:2.5px;margin:10px 14px;}
+  .seg button{flex:1;border:0;background:none;padding:7px 0;border-radius:8px;font-size:13px;font-weight:600;color:#555;cursor:pointer;}
+  .seg button.on{background:#fff;color:#000;box-shadow:0 1px 3px rgba(0,0,0,.12);}
+  /* Vote bars */
+  .vote{margin-top:8px;}
+  .vrow{margin:9px 0;cursor:pointer;}
+  .vtop{display:flex;justify-content:space-between;font-size:14px;font-weight:600;}
+  .vtop span:last-child{color:var(--grnd);font-weight:700;}
+  .vbar{height:7px;background:#ececf0;border-radius:99px;margin-top:5px;overflow:hidden;}
+  .vbar>div{height:100%;background:var(--grn);border-radius:99px;transition:width .4s;}
+  .up{border:1.5px solid var(--grn);background:#fff;color:var(--grnd);border-radius:9px;padding:5px 11px;font-size:13px;font-weight:700;cursor:pointer;}
+  .up.done{background:var(--grn);color:#fff;}
+  input[type=text]{width:100%;border:1.5px solid var(--sep);border-radius:10px;padding:10px 12px;font-size:14px;margin-top:8px;background:#fff;}
+  /* iOS switch */
+  .sw{position:relative;width:50px;height:30px;flex-shrink:0;}
+  .sw input{display:none;}
+  .sw span{position:absolute;inset:0;background:#e4e4e9;border-radius:99px;transition:.2s;cursor:pointer;}
+  .sw span:before{content:"";position:absolute;width:26px;height:26px;left:2px;top:2px;background:#fff;border-radius:50%;box-shadow:0 1.5px 4px rgba(0,0,0,.25);transition:.2s;}
+  .sw input:checked+span{background:var(--grn);}
+  .sw input:checked+span:before{left:22px;}
+  /* Tab bar */
+  .tabs{position:absolute;bottom:0;left:0;right:0;height:84px;background:rgba(250,250,250,.92);backdrop-filter:blur(14px);border-top:.5px solid var(--sep);display:flex;z-index:55;padding-bottom:16px;}
+  .tabs button{flex:1;border:0;background:none;font-size:10px;font-weight:600;color:#8e8e93;cursor:pointer;padding-top:9px;}
+  .tabs button.on{color:var(--grnd);}
+  .tabs .ti{font-size:22px;display:block;margin-bottom:2px;}
+  /* App-Modus: auf dem Handy ohne Geräterahmen */
+  html.app,html.app body{height:100%;margin:0;padding:0;background:var(--ios-bg);}
+  html.app body{display:block;}
+  html.app .phone{width:100vw;max-width:none;height:100vh;height:100dvh;border:0;border-radius:0;box-shadow:none;}
+  html.app .island,html.app .homebar,html.app .foot,html.app .sbar{display:none;}
+  html.app .scr{padding-top:14px;padding-bottom:calc(92px + env(safe-area-inset-bottom));}
+  html.app #s-lock,html.app #s-studium{padding-top:0;}
+  html.app .lockwrap{padding-top:54px;}
+  html.app .hosthead{padding-top:22px;}
+  html.app .tabs{height:auto;padding-bottom:calc(12px + env(safe-area-inset-bottom));}
+  .demohint{text-align:center;margin-top:18px;font-size:12px;opacity:.72;}
+  .hrow.about{margin-top:14px;border-top:.5px solid var(--sep);color:var(--mut);font-size:14.5px;cursor:pointer;}
+  /* Host-App: Mein Studium */
+  .hosthead{background:var(--grn);color:#fff;text-align:center;padding:62px 18px 14px;}
+  .hosthead b{display:block;font-size:17px;} .hosthead span{font-size:12px;opacity:.9;}
+  #s-studium .sbar{color:#fff;}
+  .hrow{display:flex;align-items:center;gap:13px;padding:15px 18px;background:#fff;border-bottom:.5px solid var(--sep);font-size:15.5px;}
+  .hrow .hi{width:24px;text-align:center;font-size:17px;}
+  .hrow .chev{margin-left:auto;color:#c7c7cc;font-size:18px;}
+  .hrow.live{cursor:pointer;font-weight:600;}
+  .new{background:var(--grn);color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:99px;margin-left:8px;letter-spacing:.3px;}
+  .crumb{font-size:14px;color:var(--grnd);font-weight:600;cursor:pointer;margin-bottom:2px;}
+  /* Lockscreen */
+  .lockwrap{height:100%;background:linear-gradient(165deg,#303237 0%,#374d40 75%,#4f6b3c 140%);padding:84px 14px 30px;color:#fff;overflow-y:auto;}
+  .clk{text-align:center;font-size:76px;font-weight:250;letter-spacing:-1px;}
+  .dte{text-align:center;font-size:16px;font-weight:600;opacity:.85;margin-bottom:26px;}
+  .noti{background:rgba(252,252,252,.96);color:var(--txt);border-radius:18px;padding:12px 14px;margin:10px 2px;cursor:pointer;transition:transform .1s;}
+  .noti:active{transform:scale(.98);}
+  .nh{display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-bottom:4px;}
+  .nh b{color:var(--grnd);}
+  .noti p{font-size:13.5px;line-height:1.35;}
+  .noti p b{font-size:14px;}
+  .unlock{position:absolute;bottom:26px;left:0;right:0;text-align:center;}
+  .unlock button{border:0;background:rgba(255,255,255,.18);color:#fff;border-radius:99px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;backdrop-filter:blur(6px);}
+  .homebar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:130px;height:5px;border-radius:99px;background:#000;opacity:.25;z-index:70;}
+  /* Sheet */
+  .ov{position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:80;display:none;}
+  .ov.on{display:block;}
+  .sheet{position:absolute;left:0;right:0;bottom:0;background:#f7f7fa;border-radius:22px 22px 0 0;padding:14px 16px 34px;z-index:85;transform:translateY(100%);visibility:hidden;transition:transform .28s cubic-bezier(.2,.8,.25,1),visibility 0s linear .28s;}
+  .sheet.on{transform:none;visibility:visible;transition:transform .28s cubic-bezier(.2,.8,.25,1),visibility 0s;}
+  .grab{width:38px;height:5px;background:#d4d4d9;border-radius:99px;margin:0 auto 12px;}
+  .sheet h3{font-size:17px;font-weight:800;margin-bottom:3px;}
+  .sheet .t2{margin-bottom:8px;}
+  .slots{display:flex;gap:8px;margin:10px 0;}
+  .slots button{flex:1;border:1.5px solid var(--grn);background:#fff;color:var(--grnd);border-radius:11px;padding:10px 0;font-size:14px;font-weight:700;cursor:pointer;}
+  .slots button.on{background:var(--grn);color:#fff;}
+  .qr{width:120px;height:120px;margin:12px auto;background:
+    repeating-linear-gradient(0deg,#000 0 6px,transparent 6px 12px),
+    repeating-linear-gradient(90deg,#000 0 6px,#fff 6px 12px);border-radius:8px;border:6px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+  .foot{margin-top:10px;text-align:center;font-size:10.5px;color:#c9ced4;max-width:420px;}
+</style>
+</head>
+<body>
+
+<div class="phone" id="phone">
+  <div class="island"></div>
+  <div class="homebar"></div>
+
+  <!-- LOCKSCREEN -->
+  <div class="scr on lock" id="s-lock" style="padding:0;">
+    <div class="sbar"><span>11:15</span><span>📶 ⌁ 🔋</span></div>
+    <div class="lockwrap">
+      <div class="clk">11:15</div>
+      <div class="dte">Mittwoch, 18. November</div>
+      <div class="noti" onclick="openApp('heute')">
+        <div class="nh"><span><b>MEINE WH</b></span><span>jetzt</span></div>
+        <p><b>Heute in der Mensa</b><br>Hähnchen-Burger oder Ofengemüse-Bowl. Jetzt vorbestellen und ohne Wartezeit abholen.</p>
+      </div>
+      <div class="noti" onclick="openApp('fenster')" style="opacity:.94">
+        <div class="nh"><span><b>MEINE WH</b></span><span>14:10</span></div>
+        <p><b>Frische-Fenster ab 14:15</b><br>Tagesgerichte ab 2,00 €, solange der Vorrat reicht. Auch zum Mitnehmen.</p>
+      </div>
+      
+      <div class="demohint">Konzept-Prototyp mit Beispieldaten. Tippe auf eine Mitteilung oder öffne die App.</div>
+      <div class="unlock"><button onclick="openApp('studium')">App öffnen</button></div>
+    </div>
+  </div>
+
+  <!-- HOST: MEIN STUDIUM (bestehende Meine WH App) -->
+  <div class="scr" id="s-studium" style="padding-top:0">
+    <div class="sbar"><span>11:17</span><span>📶 ⌁ 🔋</span></div>
+    <div class="hosthead"><b>Mein Studium</b><span>Westfälische Hochschule</span></div>
+    <div class="hrow live" onclick="openApp('heute')"><span class="hi">🍽</span>Mensa<span class="new">NEU · MENSA+</span><span class="chev">›</span></div>
+    <div class="hrow"><span class="hi">📄</span>Noten<span class="chev">›</span></div>
+    <div class="hrow"><span class="hi">📅</span>Kalender<span class="chev">›</span></div>
+    <div class="hrow"><span class="hi">☑️</span>To-Dos<span class="chev">›</span></div>
+    <div class="hrow"><span class="hi">📚</span>Bibliothek<span class="chev">›</span></div>
+    <div class="hrow"><span class="hi">✉️</span>Mail<span class="chev">›</span></div>
+    <div class="hrow"><span class="hi">🎓</span>Erstsemesterbereich<span class="chev">›</span></div>
+    <div class="hrow"><span class="hi">🔗</span>Links<span class="chev">›</span></div>
+    <div class="hrow"><span class="hi">💻</span>E-Learning (Moodle)<span class="chev">›</span></div>
+    <div class="hrow about" onclick="sheet('info')"><span class="hi">ⓘ</span>Über diesen Prototyp<span class="chev">›</span></div>
+  </div>
+
+  <!-- HEUTE -->
+  <div class="scr" id="s-heute">
+    <div class="sbar"><span>11:18</span><span>📶 ⌁ 🔋</span></div>
+    <div class="lt"><div class="crumb" onclick="openApp('studium')">‹ Mein Studium</div><span class="gear" onclick="sheet('settings')">⚙️</span><h1>Mensa<span style="color:var(--grn)">+</span> heute</h1><p>Mittwoch, 18. Nov · Ausgabe 11:30–14:00</p></div>
+    <div class="ban" onclick="openApp('fenster')"><b>⏰ Frische-Fenster · heute ab 14:15</b><div>Übrige Gerichte zum reduzierten Preis. Verfügbarkeit ab 14 Uhr in der App ›</div></div>
+    <div class="sec">Speisekarte</div>
+    <div class="c">
+      <div class="row"><div class="ico">🍔</div><div class="grow"><div class="t1">Hähnchen-Burger, hausgemacht</div><div class="t2"><span class="chip ch-g">FRISCH GEGRILLT</span><span class="link" onclick="tgl('d1')">mehr ⌄</span></div><div class="t2" id="d1" style="display:none">Sauerteigbrötchen aus der Campus-Backstube · Fleisch aus der Region · Soße hausgemacht<br><b>640 kcal · 38 g Eiweiß · 52 g KH · 26 g Fett</b></div></div><div class="pr">3,90 €</div></div>
+      <div class="row"><div class="ico">🥗</div><div class="grow"><div class="t1">Ofengemüse-Bowl + Falafel</div><div class="t2"><span class="chip ch-g">VEGAN</span><span class="link" onclick="tgl('d2')">mehr ⌄</span></div><div class="t2" id="d2" style="display:none">Saisonales Gemüse · Falafel aus eigener Herstellung<br><b>520 kcal · 19 g Eiweiß · 61 g KH · 18 g Fett</b></div></div><div class="pr">3,20 €</div></div>
+      <div class="row"><div class="ico">🍝</div><div class="grow"><div class="t1">Pasta-Teller</div><div class="t2"><span class="chip ch-b">KLASSIKER</span><span class="link" onclick="tgl('d3')">mehr ⌄</span></div><div class="t2" id="d3" style="display:none">Hausgemachte Tomatensauce, wahlweise + Hähnchen (+0,80 €)<br><b>580 kcal · 17 g Eiweiß · 88 g KH · 14 g Fett</b></div></div><div class="pr">2,40 €</div></div>
+      <button class="btn" onclick="sheet('order')">Vorbestellen</button>
+    </div>
+    <div class="sec">Stoßzeiten</div>
+    <div class="c" style="padding-bottom:30px">
+      <div class="t2">Gerade wenig los · empfohlene Zeit: <b style="color:var(--grnd)">bis 12:15</b> (+10 P) · Balken: erwartete Auslastung</div>
+      <div class="bars">
+        <div class="bar now" style="height:38%"><div class="bl">11:30</div></div>
+        <div class="bar" style="height:55%"><div class="bl">12:00</div></div>
+        <div class="bar hot" style="height:100%"><div class="bl">12:30</div></div>
+        <div class="bar" style="height:70%"><div class="bl">13:00</div></div>
+        <div class="bar" style="height:30%"><div class="bl">13:30</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WOCHE -->
+  <div class="scr" id="s-woche">
+    <div class="sbar"><span>11:18</span><span>📶 ⌁ 🔋</span></div>
+    <div class="lt"><div class="crumb" onclick="openApp('studium')">‹ Mein Studium</div><h1>Wochenplan</h1><p>17.–21. November</p></div>
+    <div class="seg" id="days"></div>
+    <div class="sec">Hauptgerichte</div>
+    <div class="c" id="weeklist"></div>
+    <div class="c" style="display:flex;align-items:center;gap:10px"><div class="ico">🔔</div><div class="grow"><div class="t1">Lieblingsgericht abonnieren</div><div class="t2">Benachrichtigung, wenn es Käsespätzle gibt</div></div><button class="mini" onclick="this.textContent='✓ Aktiv';this.className='mini done'">Aktivieren</button></div>
+  </div>
+
+  <!-- ABSTIMMEN -->
+  <div class="scr" id="s-vote">
+    <div class="sbar"><span>11:18</span><span>📶 ⌁ 🔋</span></div>
+    <div class="lt"><div class="crumb" onclick="openApp('studium')">‹ Mein Studium</div><h1>Abstimmen</h1><p>Stimm ab, was auf den Speiseplan kommt · +5 P</p></div>
+    <div class="sec">Abstimmung: Special nächste Woche</div>
+    <div class="c vote" id="poll"></div>
+    <div class="sec">Automaten-Wunschliste</div>
+    <div class="c" id="wish">
+      <div class="row"><div class="grow"><div class="t1">Skyr &amp; Früchte-Becher</div><div class="t2">42 Stimmen</div></div><button class="up" onclick="upv(this)">▲</button></div>
+      <div class="row"><div class="grow"><div class="t1">Belegtes Vollkorn-Sandwich</div><div class="t2">31 Stimmen</div></div><button class="up" onclick="upv(this)">▲</button></div>
+      <div class="row"><div class="grow"><div class="t1">Proteinriegel</div><div class="t2">17 Stimmen</div></div><button class="up" onclick="upv(this)">▲</button></div>
+      <input type="text" id="newwish" placeholder="Was fehlt dir im Automaten?">
+      <button class="btn soft" onclick="addWish()">Vorschlag einreichen</button>
+    </div>
+    <div class="c"><div class="t2">Jeden Freitag siehst du hier das Ergebnis und was davon umgesetzt wird.</div></div>
+  </div>
+
+  <!-- ZUSAMMEN -->
+  <div class="scr" id="s-zus">
+    <div class="sbar"><span>11:18</span><span>📶 ⌁ 🔋</span></div>
+    <div class="lt"><div class="crumb" onclick="openApp('studium')">‹ Mein Studium</div><h1>Zusammen</h1><p>Finde Leute für deine Mittagspause</p></div>
+    <div class="sec">Offene Mittagstische · 11:45–12:30</div>
+    <div class="c">
+      <div class="row"><div class="ico">🧑‍🎓</div><div class="grow"><div class="t1">Tisch BWL 3. Semester</div><div class="t2">12:00 · 3 von 6 Plätzen</div></div><button class="mini" onclick="joined(this)">Join</button></div>
+      <div class="row"><div class="ico">⚽</div><div class="grow"><div class="t1">Nach der E-Technik-Vorlesung</div><div class="t2">12:15 · 2 von 4</div></div><button class="mini" onclick="joined(this)">Join</button></div>
+      <button class="btn soft" onclick="sheet('host')">Tisch erstellen</button>
+    </div>
+    <div class="sec">Lunch-Roulette</div>
+    <div class="c">
+      <div class="t2">Du wirst einmal pro Woche mit 1–2 Studierenden aus deinem Semester gematcht und bekommst eine Kalendereinladung. Anonym bis zum Treffen.</div>
+      <button class="btn" id="rbtn" onclick="roulette()">Teilnehmen</button>
+      <div id="rres" style="display:none;background:linear-gradient(135deg,#65a800,#4e8200);color:#fff;border-radius:14px;padding:16px;text-align:center;margin-top:10px">
+        <b style="font-size:16px">Match gefunden!</b><br>
+        <span style="font-size:13px">Do 12:00 · Mensa · 2 Studierende, 3. Sem Wirtschaft<br><span style="opacity:.8;font-size:11.5px">Treffpunkt: Tisch T4</span></span>
+      </div>
+      <div class="t2" style="margin-top:8px">Teilnahme freiwillig · jederzeit pausierbar</div>
+    </div>
+  </div>
+
+  <!-- PUNKTE -->
+  <div class="scr" id="s-pkt">
+    <div class="sbar"><span>11:18</span><span>📶 ⌁ 🔋</span></div>
+    <div class="lt"><div class="crumb" onclick="openApp('studium')">‹ Mein Studium</div><h1>Punkte</h1><p>Automatisch sammeln bei jedem Einkauf</p></div>
+    <div class="c" style="text-align:center">
+      <div style="font-size:44px;font-weight:800;color:var(--grnd)">185 P</div>
+      <div class="vbar" style="margin:10px 20px"><div style="width:74%"></div></div>
+      <div class="t2">noch 65 P bis zum <b>Gratis-Essen</b> (250 P)</div>
+    </div>
+    <div class="sec">So sammelst du</div>
+    <div class="c">
+      <div class="row"><div class="ico">💳</div><div class="grow"><div class="t1">Jeder Einkauf</div><div class="t2">wird automatisch gutgeschrieben</div></div><div class="pr">+20</div></div>
+      <div class="row"><div class="ico">🕐</div><div class="grow"><div class="t1">Besuch vor 12:15</div><div class="t2">außerhalb der Stoßzeit</div></div><div class="pr">+10</div></div>
+      <div class="row"><div class="ico">♻️</div><div class="grow"><div class="t1">Rettungsportion</div><div class="t2">im Frische-Fenster</div></div><div class="pr">+15</div></div>
+      <div class="row"><div class="ico">🥡</div><div class="grow"><div class="t1">Eigener Behälter</div><div class="t2">bei Mitnahme</div></div><div class="pr">+10</div></div>
+      <div class="row"><div class="ico">🗳</div><div class="grow"><div class="t1">Abstimmen</div><div class="t2">1x pro Woche</div></div><div class="pr">+5</div></div>
+    </div>
+    <div class="sec">Aktionen</div>
+    <div class="c">
+      <div class="row"><div class="ico">✌️</div><div class="grow"><div class="t1">Freitags: doppelte Punkte</div><div class="t2">unser ruhigster Tag — mehr Betrieb, frischer gekocht</div></div><div class="pr">x2</div></div>
+      <div class="row"><div class="ico">🎂</div><div class="grow"><div class="t1">Geburtstags-Special</div><div class="t2">Gratis-Dessert an deinem Geburtstag</div></div><div class="pr">🎁</div></div>
+    </div>
+    <div class="sec">Einlösen</div>
+    <div class="c">
+      <div class="row"><div class="grow"><div class="t1">Gratis-Hauptgericht</div></div><div class="pr">250 P</div></div>
+      <div class="row"><div class="grow"><div class="t1">1 € Rabatt</div></div><div class="pr">100 P</div></div>
+      <div class="row"><div class="t2">Einlösen direkt an der Kasse. Punkte sind 2 Semester gültig.</div></div>
+    </div>
+  </div>
+
+  <!-- FRISCHE-FENSTER -->
+  <div class="scr" id="s-fenster">
+    <div class="sbar"><span>14:12</span><span>📶 ⌁ 🔋</span></div>
+    <div class="lt"><div class="crumb" onclick="openApp('heute')">‹ Mensa+</div><h1 style="color:var(--ong)">Frische-Fenster</h1><p>14:15–15:15 · solange der Vorrat reicht</p></div>
+    <div class="c" style="text-align:center">
+      <span class="chip ch-o">STARTET IN</span>
+      <div style="font-size:38px;font-weight:800;color:var(--ong)" id="cd">02:41</div>
+      <div class="t2">Stand 14:10 · 14 Portionen verfügbar</div>
+    </div>
+    <div class="c">
+      <div class="row"><div class="ico">🍔</div><div class="grow"><div class="t1">Hähnchen-Burger</div></div><div class="pr"><s style="color:#b9b9c0;font-weight:500">3,90</s> 2,50 €</div></div>
+      <div class="row"><div class="ico">🥗</div><div class="grow"><div class="t1">Ofengemüse-Bowl</div></div><div class="pr"><s style="color:#b9b9c0;font-weight:500">3,20</s> 2,00 €</div></div>
+      <div class="t2" style="margin-top:10px;text-align:center"><b>Einfach vorbeikommen, solange der Vorrat reicht.</b><br>Punkte (+15 P) gibt es automatisch an der Kasse. Eigener Behälter: +10 P extra.</div>
+    </div>
+    <div class="c"><div class="t2"><b>So funktioniert's:</b> Was mittags übrig bleibt, gibt es hier reduziert, bevor es entsorgt werden müsste. Abholung an der Theke, auch zum Mitnehmen.</div></div>
+  </div>
+
+  <!-- HOST-TABBAR (bestehende App) -->
+  <div class="tabs" id="hosttabs" style="display:none">
+    <button><span class="ti">📰</span>Feed</button>
+    <button class="on"><span class="ti">🎓</span>Studium</button>
+    <button><span class="ti">🪪</span>Ausweis</button>
+    <button><span class="ti">☰</span>Mehr</button>
+  </div>
+
+  <!-- TABBAR -->
+  <div class="tabs" id="tabs">
+    <button data-s="heute" class="on" onclick="openApp('heute')"><span class="ti">🍽</span>Heute</button>
+    <button data-s="woche" onclick="openApp('woche')"><span class="ti">📅</span>Woche</button>
+    <button data-s="vote" onclick="openApp('vote')"><span class="ti">🗳</span>Abstimmen</button>
+    <button data-s="zus" onclick="openApp('zus')"><span class="ti">👥</span>Zusammen</button>
+    <button data-s="pkt" onclick="openApp('pkt')"><span class="ti">⭐</span>Punkte</button>
+  </div>
+
+  <!-- SHEETS -->
+  <div class="ov" id="ov" onclick="closeSheet()"></div>
+  <div class="sheet" id="sh-order"><div class="grab"></div><h3>Vorbestellen</h3><div class="t2">Abholzeit wählen:</div>
+    <div class="slots"><button onclick="slot(this)">11:50</button><button onclick="slot(this)">12:00 <span style="font-weight:400">+10P</span></button><button onclick="slot(this)">12:10</button></div>
+    <button class="btn" onclick="confirmOrder()">Bestellen</button></div>
+  <div class="sheet" id="sh-done"><div class="grab"></div><h3>Bestellung bestätigt</h3><div class="t2">QR-Code bei der Abholung vorzeigen. Bezahlung an der Kasse.</div><div class="qr"></div><button class="btn soft" onclick="closeSheet()">Fertig</button></div>
+  <div class="sheet" id="sh-host"><div class="grab"></div><h3>Eigenen Tisch aufmachen</h3><div class="t2">Uhrzeit wählen:</div>
+    <div class="slots"><button onclick="slot(this)">11:45</button><button onclick="slot(this)">12:00</button><button onclick="slot(this)">12:15</button></div>
+    <button class="btn" onclick="hosted()">Tisch erstellen</button></div>
+  <div class="sheet" id="sh-info"><div class="grab"></div><h3>Über diesen Prototyp</h3>
+    <div class="row"><div class="t2" style="font-size:13.5px;color:var(--txt)">Mensa+ ist ein Konzept für ein neues Modul in der Meine WH App. Tippe in der Liste auf <b>Mensa</b>, um es auszuprobieren.</div></div>
+    <div class="row"><div class="t2">Alle Gerichte, Preise, Stimmen und Punkte sind Beispieldaten. Es wird nichts bestellt oder gespeichert.</div></div>
+    <div class="row"><div class="t2">Studentisches Konzept von Team SDG 3 (B1490 AI Innovation Challenge, WS 2026). Kein offizielles Produkt der Westfälischen Hochschule oder von UniNow.</div></div>
+    <div class="row"><div class="t2">Der Prototyp wurde mit KI erstellt (Claude). Kennzeichnung nach Art. 50 EU AI Act.</div></div>
+    <button class="btn soft" onclick="closeSheet()">Schließen</button></div>
+  <div class="sheet" id="sh-settings"><div class="grab"></div><h3>Einstellungen</h3>
+    <div class="row"><div class="grow"><div class="t1">Stundenplan-Sync</div><div class="t2">Zeiten automatisch an deine Pausen anpassen</div></div><label class="sw"><input type="checkbox" checked><span></span></label></div>
+    <div class="row"><div class="grow"><div class="t1">Mittagsmenü</div><div class="t2">täglich vormittags</div></div><label class="sw"><input type="checkbox" checked><span></span></label></div>
+    <div class="row"><div class="grow"><div class="t1">Frische-Fenster</div></div><label class="sw"><input type="checkbox" checked><span></span></label></div>
+    <div class="row"><div class="grow"><div class="t1">Lunch-Roulette</div><div class="t2">wöchentliches Match</div></div><label class="sw"><input type="checkbox"><span></span></label></div>
+    <div class="row"><div class="t2">Nutzt deinen Meine-WH-Login · keine Ortungsdaten · Datenschutzerklärung ›</div></div>
+    <button class="btn soft" onclick="closeSheet()">Schließen</button></div>
+</div>
+
+<div class="foot">Konzept-Prototyp: Mensa+ als Erweiterung der bestehenden Meine WH App · Team SDG 3 · B1490 AI Innovation Challenge<br>Studentisches Konzept, kein offizielles Produkt der WH oder von UniNow · KI-generierter Prototyp (erstellt mit Claude), Art. 50 EU AI Act</div>
+
+<script>
+const week={
+ "Mo":[["🥘","Linseneintopf + Brot","2,50 €"],["🍗","Hähnchenpfanne süß-sauer","3,40 €"],["🥗","Salat-Bowl groß","2,90 €"]],
+ "Di":[["🍛","Afrikanisches Erdnuss-Stew","2,50 €"],["🥩","Rindergulasch","3,40 €"],["🥗","Salattheke","0,90 €"]],
+ "Mi":[["🍔","Hähnchen-Burger, hausgemacht","3,90 €"],["🥗","Ofengemüse-Bowl + Falafel","3,20 €"],["🍝","Pasta-Teller","2,40 €"]],
+ "Do":[["🌯","Wrap-Tag: 3 Varianten","3,00 €"],["🐟","Backfisch + Kartoffelsalat","3,60 €"],["🍲","Gemüsecurry","2,80 €"]],
+ "Fr":[["🍕","Pizza Freitag: Ofenfrisch","3,20 €"],["🧀","Käsespätzle","2,90 €"],["🥗","Große Bowl","2,90 €"]]};
+function renderWeek(d){
+  document.getElementById('weeklist').innerHTML=week[d].map(x=>`<div class="row"><div class="ico">${x[0]}</div><div class="grow"><div class="t1">${x[1]}</div></div><div class="pr">${x[2]}</div></div>`).join('');
+  document.querySelectorAll('#days button').forEach(b=>b.classList.toggle('on',b.textContent===d));
+}
+document.getElementById('days').innerHTML=Object.keys(week).map(d=>`<button onclick="renderWeek('${d}')">${d}</button>`).join('');
+renderWeek('Mi');
+
+let votes={"🌮 Taco-Tag":58,"🍜 Ramen-Bowl":41,"🥙 Döner, aber frisch: hausgemachter Drehspieß":74};
+let voted=false;
+function renderPoll(){
+  const tot=Object.values(votes).reduce((a,b)=>a+b,0);
+  document.getElementById('poll').innerHTML=Object.entries(votes).map(([k,v])=>{
+    const p=Math.round(v/tot*100);
+    return `<div class="vrow" onclick="cast('${k.replace(/'/g,"")}')"><div class="vtop"><span>${k}</span><span>${p} %</span></div><div class="vbar"><div style="width:${p}%"></div></div></div>`;
+  }).join('')+`<div class="t2" style="margin-top:6px">${voted?'Stimme abgegeben (+5 P). Das Gewinner-Gericht kommt Mittwoch auf den Plan.':'Zum Abstimmen tippen. Das Gewinner-Gericht kommt Mittwoch auf den Plan.'}</div>`;
+}
+function cast(k){if(voted)return;const key=Object.keys(votes).find(x=>x.replace(/'/g,"")===k);votes[key]++;voted=true;renderPoll();}
+renderPoll();
+
+function upv(b){if(b.classList.contains('done'))return;b.classList.add('done');const t=b.parentElement.querySelector('.t2');t.textContent=(parseInt(t.textContent)+1)+" Stimmen · deine Stimme ✓";}
+function addWish(){const i=document.getElementById('newwish');if(!i.value.trim())return;
+  const d=document.createElement('div');d.className='row';d.innerHTML=`<div class="grow"><div class="t1">${i.value}</div><div class="t2">1 Stimme · dein Vorschlag ✓</div></div><button class="up done">▲</button>`;
+  i.parentElement.insertBefore(d,i);i.value='';}
+function tgl(id){const e=document.getElementById(id);e.style.display=e.style.display==='none'?'block':'none';}
+function joined(b){b.textContent='✓ dabei';b.className='mini done';}
+function roulette(){document.getElementById('rbtn').style.display='none';document.getElementById('rres').style.display='block';}
+function hosted(){const sel=document.querySelector('#sh-host .slots button.on');const t=sel?sel.textContent.trim():'12:00';closeSheet();
+  const list=document.querySelector('#s-zus .c');const row=document.createElement('div');row.className='row';
+  row.innerHTML='<div class="ico">🙋</div><div class="grow"><div class="t1">Dein Tisch</div><div class="t2">'+t+' · 1 von 6 Plätzen · sichtbar für deinen Kurs</div></div><button class="mini done">offen</button>';
+  list.insertBefore(row,list.querySelector('.btn'));}
+
+const map={lock:'s-lock',studium:'s-studium',heute:'s-heute',woche:'s-woche',vote:'s-vote',zus:'s-zus',pkt:'s-pkt',fenster:'s-fenster'};
+function openApp(n){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById(map[n]).classList.add('on');
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.s===n));
+  document.getElementById('tabs').style.display=(n==='lock'||n==='studium')?'none':'flex';
+  document.getElementById('hosttabs').style.display=(n==='studium')?'flex':'none';
+  closeSheet();
+}
+function sheet(n){document.getElementById('ov').classList.add('on');document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('on'));document.getElementById('sh-'+n).classList.add('on');}
+function closeSheet(){document.getElementById('ov').classList.remove('on');document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('on'));}
+function slot(b){b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');}
+function confirmOrder(){sheet('done');}
+
+const q=new URLSearchParams(location.search);
+if(!q.has('frame')&&(q.has('app')||(navigator.maxTouchPoints>0&&Math.min(screen.width,window.innerWidth)<600)))document.documentElement.classList.add('app');
+const h=location.hash.replace('#','');
+if(map[h]){openApp(h);}else{openApp('lock');}
+let t=161;setInterval(()=>{t=t>0?t-1:161;const el=document.getElementById('cd');if(el)el.textContent=String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');},1000);
+</script>
+</body>
+</html>
