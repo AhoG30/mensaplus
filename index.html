@@ -110,6 +110,9 @@
   .unlock{position:absolute;bottom:26px;left:0;right:0;text-align:center;}
   .unlock button{border:0;background:rgba(255,255,255,.18);color:#fff;border-radius:99px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;backdrop-filter:blur(6px);}
   .homebar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:130px;height:5px;border-radius:99px;background:#000;opacity:.25;z-index:70;}
+  .toast{position:absolute;top:66px;left:50%;transform:translate(-50%,-14px);background:var(--grnd);color:#fff;font-size:14px;font-weight:700;padding:8px 16px;border-radius:99px;opacity:0;transition:opacity .25s,transform .25s;z-index:90;pointer-events:none;white-space:nowrap;}
+  .toast.on{opacity:1;transform:translate(-50%,0);}
+  html.app .toast{top:18px;}
   /* Sheet */
   .ov{position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:80;display:none;}
   .ov.on{display:block;}
@@ -226,10 +229,11 @@
     <div class="sbar"><span>11:18</span><span>📶 ⌁ 🔋</span></div>
     <div class="lt"><div class="crumb" onclick="openApp('studium')">‹ Mein Studium</div><h1>Zusammen</h1><p>Finde Leute für deine Mittagspause</p></div>
     <div class="sec">Offene Mittagstische · 11:45–12:30</div>
+    <div class="t2" style="margin:2px 20px 0">Gemeinsam essen bringt Punkte: beitreten <b style="color:var(--grnd)">+10 P</b>, Tisch erstellen <b style="color:var(--grnd)">+15 P</b></div>
     <div class="c">
       <div class="row"><div class="ico">🧑‍🎓</div><div class="grow"><div class="t1">Tisch BWL 3. Semester</div><div class="t2">12:00 · 3 von 6 Plätzen</div></div><button class="mini" onclick="joined(this)">Join</button></div>
       <div class="row"><div class="ico">⚽</div><div class="grow"><div class="t1">Nach der E-Technik-Vorlesung</div><div class="t2">12:15 · 2 von 4</div></div><button class="mini" onclick="joined(this)">Join</button></div>
-      <button class="btn soft" onclick="sheet('host')">Tisch erstellen</button>
+      <button class="btn soft" onclick="sheet('host')">Tisch erstellen · +15 P</button>
     </div>
     <div class="sec">Lunch-Roulette</div>
     <div class="c">
@@ -239,7 +243,7 @@
         <b style="font-size:16px">Match gefunden!</b><br>
         <span style="font-size:13px">Do 12:00 · Mensa · 2 Studierende, 3. Sem Wirtschaft<br><span style="opacity:.8;font-size:11.5px">Treffpunkt: Tisch T4</span></span>
       </div>
-      <div class="t2" style="margin-top:8px">Teilnahme freiwillig · jederzeit pausierbar</div>
+      <div class="t2" style="margin-top:8px">+10 P pro Treffen · Teilnahme freiwillig · jederzeit pausierbar</div>
     </div>
   </div>
 
@@ -248,9 +252,9 @@
     <div class="sbar"><span>11:18</span><span>📶 ⌁ 🔋</span></div>
     <div class="lt"><div class="crumb" onclick="openApp('studium')">‹ Mein Studium</div><h1>Punkte</h1><p>Automatisch sammeln bei jedem Einkauf</p></div>
     <div class="c" style="text-align:center">
-      <div style="font-size:44px;font-weight:800;color:var(--grnd)">185 P</div>
-      <div class="vbar" style="margin:10px 20px"><div style="width:74%"></div></div>
-      <div class="t2">noch 65 P bis zum <b>Gratis-Essen</b> (250 P)</div>
+      <div style="font-size:44px;font-weight:800;color:var(--grnd)" id="ptsVal">185 P</div>
+      <div class="vbar" style="margin:10px 20px"><div id="ptsBar" style="width:74%"></div></div>
+      <div class="t2" id="ptsRest">noch 65 P bis zum <b>Gratis-Essen</b> (250 P)</div>
     </div>
     <div class="sec">So sammelst du</div>
     <div class="c">
@@ -258,6 +262,8 @@
       <div class="row"><div class="ico">🕐</div><div class="grow"><div class="t1">Besuch vor 12:15</div><div class="t2">außerhalb der Stoßzeit</div></div><div class="pr">+10</div></div>
       <div class="row"><div class="ico">♻️</div><div class="grow"><div class="t1">Rettungsportion</div><div class="t2">im Frische-Fenster</div></div><div class="pr">+15</div></div>
       <div class="row"><div class="ico">🥡</div><div class="grow"><div class="t1">Eigener Behälter</div><div class="t2">bei Mitnahme</div></div><div class="pr">+10</div></div>
+      <div class="row"><div class="ico">🙋</div><div class="grow"><div class="t1">Tisch erstellen</div><div class="t2">sobald jemand beitritt</div></div><div class="pr">+15</div></div>
+      <div class="row"><div class="ico">👥</div><div class="grow"><div class="t1">Gemeinsam essen</div><div class="t2">Tisch beitreten oder Roulette-Treffen</div></div><div class="pr">+10</div></div>
       <div class="row"><div class="ico">🗳</div><div class="grow"><div class="t1">Abstimmen</div><div class="t2">1x pro Woche</div></div><div class="pr">+5</div></div>
     </div>
     <div class="sec">Aktionen</div>
@@ -306,6 +312,8 @@
     <button data-s="zus" onclick="openApp('zus')"><span class="ti">👥</span>Zusammen</button>
     <button data-s="pkt" onclick="openApp('pkt')"><span class="ti">⭐</span>Punkte</button>
   </div>
+
+  <div class="toast" id="toast"></div>
 
   <!-- SHEETS -->
   <div class="ov" id="ov" onclick="closeSheet()"></div>
@@ -356,7 +364,7 @@ function renderPoll(){
     return `<div class="vrow" onclick="cast('${k.replace(/'/g,"")}')"><div class="vtop"><span>${k}</span><span>${p} %</span></div><div class="vbar"><div style="width:${p}%"></div></div></div>`;
   }).join('')+`<div class="t2" style="margin-top:6px">${voted?'Stimme abgegeben (+5 P). Das Gewinner-Gericht kommt Mittwoch auf den Plan.':'Zum Abstimmen tippen. Das Gewinner-Gericht kommt Mittwoch auf den Plan.'}</div>`;
 }
-function cast(k){if(voted)return;const key=Object.keys(votes).find(x=>x.replace(/'/g,"")===k);votes[key]++;voted=true;renderPoll();}
+function cast(k){if(voted)return;const key=Object.keys(votes).find(x=>x.replace(/'/g,"")===k);votes[key]++;voted=true;renderPoll();addPts(5,'abgestimmt');}
 renderPoll();
 
 function upv(b){if(b.classList.contains('done'))return;b.classList.add('done');const t=b.parentElement.querySelector('.t2');t.textContent=(parseInt(t.textContent)+1)+" Stimmen · deine Stimme ✓";}
@@ -364,11 +372,16 @@ function addWish(){const i=document.getElementById('newwish');if(!i.value.trim()
   const d=document.createElement('div');d.className='row';d.innerHTML=`<div class="grow"><div class="t1">${i.value}</div><div class="t2">1 Stimme · dein Vorschlag ✓</div></div><button class="up done">▲</button>`;
   i.parentElement.insertBefore(d,i);i.value='';}
 function tgl(id){const e=document.getElementById(id);e.style.display=e.style.display==='none'?'block':'none';}
-function joined(b){b.textContent='✓ dabei';b.className='mini done';}
+let pts=185;
+function addPts(n,why){pts+=n;document.getElementById('ptsVal').textContent=pts+' P';
+  document.getElementById('ptsBar').style.width=Math.min(100,Math.round(pts/250*100))+'%';
+  document.getElementById('ptsRest').innerHTML=pts>=250?'Du kannst ein <b>Gratis-Essen</b> einlösen':'noch '+(250-pts)+' P bis zum <b>Gratis-Essen</b> (250 P)';
+  const t=document.getElementById('toast');t.textContent='+'+n+' Punkte · '+why;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),1900);}
+function joined(b){if(b.classList.contains('done'))return;b.textContent='✓ dabei';b.className='mini done';addPts(10,'Tisch beigetreten');}
 function roulette(){document.getElementById('rbtn').style.display='none';document.getElementById('rres').style.display='block';}
 function hosted(){const sel=document.querySelector('#sh-host .slots button.on');const t=sel?sel.textContent.trim():'12:00';closeSheet();
   const list=document.querySelector('#s-zus .c');const row=document.createElement('div');row.className='row';
-  row.innerHTML='<div class="ico">🙋</div><div class="grow"><div class="t1">Dein Tisch</div><div class="t2">'+t+' · 1 von 6 Plätzen · sichtbar für deinen Kurs</div></div><button class="mini done">offen</button>';
+  row.innerHTML='<div class="ico">🙋</div><div class="grow"><div class="t1">Dein Tisch</div><div class="t2">'+t+' · 1 von 6 Plätzen · +15 P, sobald jemand beitritt</div></div><button class="mini done">offen</button>';
   list.insertBefore(row,list.querySelector('.btn'));}
 
 const map={lock:'s-lock',studium:'s-studium',heute:'s-heute',woche:'s-woche',vote:'s-vote',zus:'s-zus',pkt:'s-pkt',fenster:'s-fenster'};
